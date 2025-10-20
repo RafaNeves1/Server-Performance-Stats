@@ -1,0 +1,36 @@
+echo "=========================================="
+echo "      Estatísticas do Servidor"
+echo "=========================================="
+echo
+
+
+echo "[USO DA CPU]"
+cpu_idle=$(top -bn1 | grep "Cpu(s)" | awk '{print $8}' | cut -d',' -f1)
+cpu_usage=$(echo "100 - $cpu_idle" | bc)
+echo "Uso total da CPU: $cpu_usage%"
+
+echo
+
+echo "[USO DE MEMÓRIA]"
+mem_info=$(free -m | awk 'NR==2{printf "Usado: %sMB | Livre: %sMB | Total: %sMB | Uso: %.2f%%\n", $3,$4,$2,($3*100/$2)}')
+echo "$mem_info"
+
+echo
+
+echo "[USO DE DISCO]"
+df -h --total | grep total | awk '{printf "Usado: %s | Livre: %s | Total: %s | Uso: %s\n", $3,$4,$2,$5}'
+
+echo
+
+echo "[TOP 5 PROCESSOS POR USO DE CPU]"
+ps -eo pid,comm,%cpu --sort=-%cpu | head -n 6
+
+echo
+
+echo "[TOP 5 PROCESSOS POR USO DE MEMÓRIA]"
+ps -eo pid,comm,%mem --sort=-%mem | head -n 6
+
+echo
+echo "=========================================="
+echo "      Fim do Relatório"
+echo "=========================================="
